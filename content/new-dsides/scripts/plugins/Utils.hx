@@ -12,7 +12,8 @@
 
 import haxe.Json;
 import lime.graphics.Image;
-import funkin.FunkinAssets;
+import sys.io.File;
+import sys.FileSystem;
 import flixel.text.FlxText;
 import funkin.Mods;
 import funkin.backend.Conductor;
@@ -34,9 +35,6 @@ function onLoad() {
 */
 function saveFix()
 {
-	if(FlxG.save.data.completionPercent == null)
-		FlxG.save.data.completionPercent = 0;
-
 	if(FlxG.save.data.completedSongs == null)
 		FlxG.save.data.completedSongs = [];
 
@@ -71,14 +69,60 @@ function saveFix()
 	FlxG.save.flush();
 }
 
+// used for setting specific song's percentages, since some songs have different values
+var percentMap = new StringMap();
+for(i in ['tutorial', 'bopeebo', 'fresh', 'dad-battle', 'spookeez', 'south', 'ghastly', 'monster', 'pico', 'philly-nice', 'blammed', 'darnell', 'improbable-outset', 'boom-bash', 'foolhardy', 'dusk', 'accelerant', 'and', 'dguy', 'lore', 'performance', 'try-harder', 'endless', 'milk'])
+    percentMap.set(i, 3);
+percentMap.set('execution', 3.999);
+percentMap.set('soretro', 0.001);
+
+final v1trophies = ['pico', 'bf', 'gf', 'chester', 'god'];
+final v1songs = ['tutorial', 'bopeebo', 'fresh', 'dad-battle', 'spookeez', 'south', 'ghastly', 'monster', 'pico', 'philly-nice', 'blammed', 'darnell', 'improbable-outset', 'boom-bash', 'foolhardy', 'accelerant', 'dusk', 'and', 'dguy', 'lore', 'performance', 'try-harder', 'endless', 'milk', 'execution', 'soretro'];
+final v1menus = ['main', 'story', 'freeplay', 'credits', 'gallery'];
+
+function getV1Percent()
+{
+	var _trophy = 0;
+	var _songs = 0;
+	var _menus = 0;
+
+	for(i in v1trophies)
+	{
+		final check = FlxG.save.data.trophyCompletion.get(i);
+
+		if(check != null)
+			if(check) _trophy += 2;
+	}
+
+	for(i in v1songs)
+	{
+		final check = FlxG.save.data.completedSongs.contains(i);
+
+		final perc = percentMap.get(i);
+
+		if(check) _songs += perc;
+	}
+
+	for(i in v1menus)
+	{
+		final check = FlxG.save.data.completedMenuShit.get(i);
+
+		if(check != null)
+			if(check) _menus += 1.4;
+	}
+
+	if(FlxG.save.data.completedMenuShit.get('funky') != null)
+		if(FlxG.save.data.completedMenuShit.get('funky')) _menus += 7;
+
+	return (_trophy + _songs + _menus);
+}
+
 /**
  * [deleteProgress()]
  * Resets custom save-data variables so you can play the mod fresh from the beginning.
 */
 function deleteProgress()
 {
-	FlxG.save.data.completionPercent = 0;
-
 	// all 3% except for execution (3.999%) and ??? (0.001%)
 	FlxG.save.data.completedSongs = [];
 
@@ -122,7 +166,7 @@ function fullSave()
 	saveFix();
 
 	FlxG.save.data.completedSongs = [];
-	for(i in ['tutorial', 'bopeebo', 'fresh', 'dad-battle', 'spookeez', 'south', 'ghastly', 'monster', 'pico', 'philly-nice', 'blammed', 'darnell', 'improbable-outset', 'boom-bash', 'foolhardy', 'dusk', 'accelerant', 'and', 'dguy', 'lore', 'performance', 'try-harder', 'endless', 'milk','execution', 'soretro'])
+	for(i in v1songs)
 		FlxG.save.data.completedSongs.push(i);
 
 
@@ -157,7 +201,6 @@ function fullSave()
 	FlxG.save.data.unlockedHim = true;
 
 	FlxG.save.data.loading = false;
-	FlxG.save.data.completionPercent = 100;
 	FlxG.save.flush();
 }
 
@@ -222,7 +265,7 @@ function onStateSwitchPost(state) {
 */
 // Loads song json stuff, used for lyrics & metadata stuff
 function loadJson(name, song) {
-	var rawJson = FunkinAssets.getContent(Paths.modFolders(StringTools.replace('songs/' + song + '/data/' + name + '.json', ' ', '-')));
+	var rawJson = File.getContent(Paths.modFolders(StringTools.replace('songs/' + song + '/data/' + name + '.json', ' ', '-')));
 	var data = Json.parse(rawJson);
 	return data;
 }
@@ -253,8 +296,8 @@ function setMouseGraphic(hovered:Bool = false) {
  */
 function setDirectory(directory:String) {
 	Mods.currentModDirectory = directory;
-	Paths.currentModDirectory = directory;
-	Mods.applyModConfig(directory);
+	Mods.updateModList(directory);
+	Mods.loadTopMod();
 }
 
 

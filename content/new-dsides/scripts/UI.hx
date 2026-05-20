@@ -114,8 +114,8 @@ function onCreatePost() {
 	if (FunkinAssets.exists(Paths.modFolders(StringTools.replace('songs/' + PlayState.SONG.song.toLowerCase() + '/data/lyrics.json', ' ', '-'))))
 		initScript('data/scripts/Lyrics');
 
-	if (boyfriend.curCharacter == 'bf' && ClientPrefs.inDevMode && FlxG.save.data.completionPercent >= 100)
-		initScript('data/scripts/bf');
+	// if (boyfriend.curCharacter == 'bf' && ClientPrefs.inDevMode)
+	// 	initScript('data/scripts/bf');
 	
 	// trace(boyfriend.curCharacter);
 }

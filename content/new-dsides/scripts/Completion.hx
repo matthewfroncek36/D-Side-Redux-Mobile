@@ -8,17 +8,6 @@ import funkin.scripting.PluginsManager;
 var song;
 var needsCompletion:Bool = false;
 
-// used for setting specific song's percentages, since some songs have different values
-var percentMap = new StringMap();
-for(i in ['tutorial', 'bopeebo', 'fresh', 'dad-battle', 'spookeez', 'south', 'ghastly', 'monster', 'pico', 'philly-nice', 'blammed', 'darnell', 'improbable-outset', 'boom-bash', 'foolhardy', 'dusk', 'accelerant', 'and', 'dguy', 'lore', 'performance', 'try-harder', 'endless', 'milk'])
-    percentMap.set(i, 3);
-percentMap.set('execution', 3.999);
-percentMap.set('soretro', 0.001);
-
-var exclusions = [
-    'bobos-chicken'
-];
-
 /**
  * [onLoad()]
  * Runs on loading of the script.
@@ -46,22 +35,6 @@ function onLoad()
 function onEndSong()
 {
     if(needsCompletion){
-        var perc = percentMap.get(song);
-        if(perc == null) perc = 3;
-        var exc = false;
-
-        for(i in exclusions)
-            exc = i == song;
-        
-        // Weird bug where if the song doesnt exist, it will append the word "null" to the completionPercent variable
-        if(!exc){
-            if(StringTools.contains(FlxG.save.data.completionPercent, 'null')){
-                FlxG.save.data.completionPercent = StringTools.replace(FlxG.save.data.completionPercent, 'null', '');
-                FlxG.save.data.completionPercent = Std.parseFloat(FlxG.save.data.completionPercent);
-            }
-            FlxG.save.data.completionPercent += perc;            
-        }
-
         FlxG.save.data.completedSongs.push(song);
 
         FlxG.save.flush();

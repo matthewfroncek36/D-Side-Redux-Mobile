@@ -25,6 +25,17 @@ var mid = false;
  */
 function onEvent(eventName, value1, value2) {
 	switch (eventName) {
+			case 'Angle':
+				FlxTween.cancelTweensOf(camGame);
+
+				var poop = value1.split(',');
+				var angle = Std.parseFloat(poop[0]);
+				var time = Std.parseFloat(poop[1]);
+
+				var ease = poop.length <= 2 ? FlxEase.quartInOut : CoolUtil.getEaseFromString(poop[2]);
+
+				FlxTween.tween(camGame, {angle: angle}, time, {ease: ease});
+
 		case 'Middle Camera':
 			switch (value1.toLowerCase()) {
 				case 'on': mid = true;
