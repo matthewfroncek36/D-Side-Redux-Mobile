@@ -14,7 +14,7 @@ function onLoad()
     bg.scrollFactor.set(0.7, 0.6);
     add(bg);
 
-    speaker = new Bopper(-930, -465).loadAtlas('backgrounds/accel/GruntSpeakers');
+    speaker = new Bopper(75, 50).loadAtlas('backgrounds/accel/GruntSpeakers');
     speaker.addAnimByPrefix('idle', 'DJ Set', 24, false);
     speaker.setScale(0.7, 0.7);
     speaker.scrollFactor.set(0.7, 0.6);

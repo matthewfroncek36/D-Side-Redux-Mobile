@@ -10,7 +10,6 @@ import flixel.util.FlxStringUtil;
 import flixel.text.FlxText;
 
 var skipIntro:Bool = ClientPrefs.lowQuality;
-
 var black:FlxSprite;
 var grayscale = new HSLColorSwap();
 grayscale.saturation = -0.5;
@@ -40,16 +39,16 @@ function makeStageSprite(x, y, name) {
 }
 
 function onLoad() {
-	if(!ClientPrefs.lowQuality){
+	if (!ClientPrefs.lowQuality) {
 		bgCam = new FlxCamera(0, 0, 1280, 720, 1);
 		if (ClientPrefs.shaders && ClientPrefs.flashing) {
-				bgCam.filters = [
-					new ShaderFilter(wave.shader),
-					new ShaderFilter(grayscale.shader),
-					new ShaderFilter(high)
-				];
+			bgCam.filters = [
+				new ShaderFilter(wave.shader),
+				new ShaderFilter(grayscale.shader),
+				new ShaderFilter(high)
+			];
 		}
-		FlxG.cameras.insert(bgCam,FlxG.cameras.list.indexOf(camGame),false);
+		FlxG.cameras.insert(bgCam, FlxG.cameras.list.indexOf(camGame), false);
 		followingCams.push(bgCam);
 
 		camGame.bgColor = 0x0;
@@ -67,7 +66,7 @@ function onLoad() {
 	bg.antialiasing = true;
 	add(bg);
 
-	if(!skipIntro){
+	if (!skipIntro) {
 		bgOld.camera = bgCam;
 		bg.camera = bgCam;
 
@@ -99,15 +98,13 @@ function onLoad() {
 		black.camera = camHUD;
 		black.scrollFactor.set();
 		add(black);
-
 	}
-
 }
 
 function onCreatePost() {
 	warning = new FlxSprite().loadGraphic(Paths.image('cutscenes/monster/warn'));
 	warning.camera = camOther;
-	warning.scale.set(0.65,0.65);
+	warning.scale.set(0.65, 0.65);
 	warning.updateHitbox();
 	warning.screenCenter(FlxAxes.Y);
 	warning.x = FlxG.width - warning.width - 20;
@@ -126,9 +123,11 @@ function onCreatePost() {
 	bambino = new Character(550, -550, 'monsterlemon');
 	bambino.y -= bambino.height;
 	add(bambino);
-	playFields.members[2].autoPlayed = true;
-	playFields.members[2].playerControls = false;
-	playFields.members[2].owner = bambino;
+
+	getFieldFromID(2).autoPlayed = true;
+	getFieldFromID(2).playerControls = false;
+	getFieldFromID(2).owner = bambino;
+	getFieldFromID(2).singers = [bambino];
 
 	modManager.queueFuncOnce(1366, (s, s2) -> {
 		cameraSpeed = 1;
@@ -151,33 +150,34 @@ function onCreatePost() {
 		});
 	});
 
-	modManager.queueFuncOnce(1820, ()->{
+	modManager.queueFuncOnce(1820, () -> {
 		FlxTween.tween(warning, {alpha: 1}, 2);
 		FlxTween.tween(warningTxt, {alpha: 1}, 2);
+
+		if (!ClientPrefs.opponentStrums)
+			FlxTween.tween(getFieldFromID(1), {baseAlpha: 1}, 4);
 	});
-	modManager.queueFuncOnce(1888, ()->{
+	modManager.queueFuncOnce(1888, () -> {
 		FlxTween.tween(warning, {alpha: 0}, 2);
 		FlxTween.tween(warningTxt, {alpha: 0}, 2);
 	});
 
-	modManager.queueFuncOnce(1870, ()->{
-		opponentStrums.playerControls = true;
-		opponentStrums.autoPlayed = false;
-		opponentStrums.ID = 0;
-
-		opponentStrums.noteHitCallback.removeAll();
-		opponentStrums.noteHitCallback.add(noteHit);
-		opponentStrums.noteMissCallback.add(noteMiss);
+	modManager.queueFuncOnce(1870, () -> {
+		getFieldFromID(1).noteSplashes = true;
+		getFieldFromID(1).playerControls = true;
+		getFieldFromID(1).autoPlayed = cpuControlled;
+		// getFieldFromID(1).ID = 0;
 	});
 
-	modManager.queueFuncOnce(2080, ()->{
-		opponentStrums.playerControls = false;
-		opponentStrums.autoPlayed = true;
-		opponentStrums.ID = 1;
+	modManager.queueFuncOnce(2080, () -> {
+		getFieldFromID(1).playerControls = false;
+		getFieldFromID(1).autoPlayed = true;
+		getFieldFromID(1).noteSplashes = false;
 
-		opponentStrums.noteHitCallback.removeAll();
-		opponentStrums.noteHitCallback.add(noteHit);
-		opponentStrums.noteMissCallback.removeAll();
+		if (!ClientPrefs.opponentStrums)
+			FlxTween.tween(getFieldFromID(1), {baseAlpha: 0}, 4);
+
+		// getFieldFromID(1).ID = 1;
 	});
 
 	modManager.setValue("alpha", 1, 2);
@@ -195,7 +195,6 @@ function onCreatePost() {
 	modManager.queueEase(1606, 1622, "transformY", 0, 'quartInOut');
 	modManager.queueEase(1606, 1622, "transformZ", 0, 'quartInOut');
 
-
 	modManager.queueEase(1648, 1712, "alpha", 1, 'linear', 0);
 	modManager.queueEase(1872, 1888, "opponentSwap", 0.5, 'backIn');
 	modManager.queueEase(1872, 1888, "alpha", 0.2, 'backIn', 1);
@@ -209,7 +208,7 @@ function onCreatePost() {
 	modManager.queueEase(2416, 2432, "opponentSwap", 0.5, 'quartInOut');
 	modManager.queueEase(2416, 2432, "alpha", 1, 'quartInOut', 1);
 
-	if(!skipIntro){
+	if (!skipIntro) {
 		bambino.camera = bgCam;
 
 		monsterAnims = new Character(-62, 198, 'monster-anims');
@@ -311,7 +310,7 @@ function onCreatePost() {
 			gf.danceEveryNumBeats = 2;
 			boyfriend.danceEveryNumBeats = 2;
 		});
-		
+
 		modManager.queueFuncOnce(1072, () -> {
 			camGame.filters = [];
 
@@ -360,9 +359,6 @@ function onCreatePost() {
 			for (i in creatureFeature.members)
 				FlxTween.tween(i, {alpha: 0.9}, 12);
 		});
-
-
-
 
 		modManager.queueFuncOnce(1872, (s, s2) -> {
 			FlxTween.tween(camFollow, {x: getCharacterCameraPos(gf).x, y: getCharacterCameraPos(gf).y}, 1.5, {ease: FlxEase.quartOut});
@@ -414,7 +410,7 @@ function onCreatePost() {
 				thoughtBubble.animation.play('bubble', true);
 			});
 
-			FlxTimer.wait(5, ()->{
+			FlxTimer.wait(5, () -> {
 				boyfriend.visible = false;
 			});
 		});
@@ -615,10 +611,9 @@ function onCreatePost() {
 		modManager.queueEase(1072, 1088, "opponentSwap", 0.5, 'quartInOut');
 		modManager.queueEase(1072, 1088, "alpha", 1, 'quartInOut', 1);
 
-		if(ClientPrefs.modcharts)
-		{
+		if (ClientPrefs.modcharts) {
 			modManager.queueEase(1072, 1088, "tipsy", 0.25, 'quartInOut');
-		
+
 			modManager.queueFunc(1088 - 4, 1344 + 12, function(event, step) {
 				var prog = 0;
 				var inLen = 8;
@@ -645,15 +640,13 @@ function onCreatePost() {
 				modManager.setValue("stretch", c * (0.25) * prog);
 				modManager.setValue("squish", s * (0.25 * 0.75) * prog);
 			});
-
 		}
 
 		modManager.queueEase(1344, 1360, "opponentSwap", 0, 'quartInOut');
 		modManager.queueEase(1344, 1360, "alpha", 0, 'quartInOut', 1);
 		modManager.queueEase(1344, 1360, "tipsy", 0, 'quartInOut');
 
-		if(ClientPrefs.modcharts)
-		{
+		if (ClientPrefs.modcharts) {
 			modManager.queueEase(2416, 2432, "tipsy", 0.25, 'quartInOut');
 
 			modManager.queueFunc(2432 - 4, 2640 + 12, function(event, step) {
@@ -687,13 +680,11 @@ function onCreatePost() {
 		addCharacterToList('bf-monster-dark', 0);
 		addCharacterToList('monster-dark', 1);
 		addCharacterToList('gf-monster-dark', 2);
-
 	} else {
 		defaultCamZoom = 0.75;
 		camZooming = true;
 		grayscale.saturation = 0;
 	}
-	
 }
 
 function onSongStart() {
@@ -714,7 +705,8 @@ function onSongStart() {
 var f = 1;
 
 function onBeatHit() {
-	if(skipIntro) return;
+	if (skipIntro)
+		return;
 
 	if (geeked)
 		high_effectiveness = highamnt;
@@ -734,19 +726,19 @@ function onBeatHit() {
 var timer = 0;
 
 function onUpdate(elapsed) {
-	if(warningTxt.alpha > 0 && warningTxt != null)
-	{
+	if (warningTxt.alpha > 0 && warningTxt != null) {
 		var curTime:Float = Math.max(0, Conductor.songPosition - ClientPrefs.noteOffset);
 		var songCalc:Float = (156000 - curTime);
 		var secondsTotal:Int = Math.floor(songCalc / 1000);
-		if (secondsTotal < 0) secondsTotal = 0;
-
+		if (secondsTotal < 0)
+			secondsTotal = 0;
 
 		warningTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
 		warningTxt.x = warning.x + (warning.width - warningTxt.width) / 2;
 	}
-	
-	if(skipIntro) return;
+
+	if (skipIntro)
+		return;
 
 	wave.update(elapsed);
 	high_effectiveness = FlxMath.lerp(high_effectiveness, geeked ? 0.1 : 0, FlxMath.bound(elapsed * 3, 0, 1));
@@ -762,7 +754,7 @@ function onUpdate(elapsed) {
 
 function onSpawnNotePost(note) {
 	if (note.lane == 2)
-		note.rgbShader.setColors([0xFFfe600, FlxColor.WHITE, 0xFF7d6919]);
+		note.setCustomColor([0xFFfe600, FlxColor.WHITE, 0xFF7d6919]);
 }
 
 function onEvent(eventName, value1, value2) {
@@ -803,8 +795,9 @@ function onEvent(eventName, value1, value2) {
 }
 
 var gameovervoiceline:FlxSound;
+
 function deathAnimStart() {
-		FlxTween.tween(FlxG.sound.music, {volume: 0.5}, 0.2);
+	FlxTween.tween(FlxG.sound.music, {volume: 0.5}, 0.2);
 	FlxTimer.wait(0.2, () -> {
 		gameovervoiceline = FlxG.sound.play(Paths.sound('gameoverlines/chester/chester_line_' + FlxG.random.int(1, 11)));
 		gameovervoiceline.play();
@@ -812,11 +805,10 @@ function deathAnimStart() {
 	});
 }
 
-function onGameOverCancel()
-{
-	if(gameovervoiceline != null)
+function onGameOverCancel() {
+	if (gameovervoiceline != null)
 		gameovervoiceline.stop();
-	
+
 	FlxTween.cancelTweensOf(FlxG.sound.music);
 	FlxG.sound.music.volume = 1;
 

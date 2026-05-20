@@ -17,11 +17,11 @@ var rainTime:Float = 0;
 var rain2 = newShader('rain2');
 var pico_intro_anim:AnimateSprite;
 var can = true;
-
 var cutsceneSounds = [];
 
 function onStartCountdown() {
-	if(ClientPrefs.lowQuality) return;
+	if (ClientPrefs.lowQuality)
+		return;
 
 	if (can) {
 		can = false;
@@ -80,7 +80,7 @@ function onLoad() {
 	}
 
 	reload_sign();
-	
+
 	light_back = new FlxBackdrop(null, FlxAxes.X, 4000).setFrames(Paths.getSparrowAtlas('backgrounds/weekend1/weekend1'));
 	light_back.animation.addByPrefix('light_back', 'light_back', 24, true);
 	light_back.animation.play('light_back');
@@ -88,7 +88,7 @@ function onLoad() {
 	light_back.scrollFactor.set(0.93, 0.93);
 	light_back.scale.set(1.4, 1.4);
 	add(light_back);
-	
+
 	street = new FlxBackdrop(null, FlxAxes.X, 0).setFrames(Paths.getSparrowAtlas('backgrounds/weekend1/weekend1'));
 	street.animation.addByPrefix('street', 'street', 24, true);
 	street.animation.play('street');
@@ -105,7 +105,7 @@ function onLoad() {
 	light_front.zIndex = 20;
 	add(light_front);
 
-	if(!ClientPrefs.lowQuality){
+	if (!ClientPrefs.lowQuality) {
 		tunnelbg = new FlxBackdrop(Paths.image('backgrounds/weekend1/tunnelbg'), FlxAxes.X, 0);
 		tunnelbg.scrollFactor.set(0.95, 0.95);
 		tunnelbg.y -= 130;
@@ -117,8 +117,7 @@ function onLoad() {
 	truck.scale.set(1.4, 1.4);
 	add(truck);
 
-
-	if(!ClientPrefs.lowQuality){
+	if (!ClientPrefs.lowQuality) {
 		truckdark = makeStageSprite(-600, 270, 'darktruck', 'weekend1');
 		truckdark.scale.set(1.4, 1.4);
 		truckdark.alpha = 0.00001;
@@ -140,12 +139,12 @@ function onLoad() {
 		add(blend_bg);
 
 		darnell_cutscene = new Character(0, 0, 'darnell-cutscene');
-		startCharacterPos(darnell_cutscene, true);
-		dadGroup.add(darnell_cutscene);
+		// startCharacterPos(darnell_cutscene, true);
+		dadGroup.addChar(darnell_cutscene);
 
 		pico_cutscene = new Character(0, 0, 'pico-playable-cutscene', true);
-		startCharacterPos(pico_cutscene, true);
-		boyfriendGroup.add(pico_cutscene);
+		// startCharacterPos(pico_cutscene, true);
+		boyfriendGroup.addChar(pico_cutscene);
 
 		darnell_cutscene.alpha = 0;
 		pico_cutscene.alpha = 0;
@@ -158,7 +157,8 @@ function onLoad() {
 }
 
 function onCreatePost() {
-	if(ClientPrefs.lowQuality) return;
+	if (ClientPrefs.lowQuality)
+		return;
 
 	addCharacterToList('pico-playable-tunnel', 0);
 	addCharacterToList('darnell-tunnel', 1);
@@ -205,9 +205,10 @@ var weirdTween2:FlxTween;
 var skipTxt:FlxText;
 
 function playCutscene() {
-	if(ClientPrefs.lowQuality) return;
-	
-	if(FlxG.save.data.completedSongs.contains('darnell')){
+	if (ClientPrefs.lowQuality)
+		return;
+
+	if (FlxG.save.data.completedSongs.contains('darnell')) {
 		skipTxt = new FlxText(20);
 		skipTxt.setFormat(Paths.font('Pixim.otf'), 32, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		skipTxt.camera = camOther;
@@ -286,7 +287,7 @@ function playCutscene() {
 				}
 			});
 
-			FlxTimer.wait(8, ()->{
+			FlxTimer.wait(8, () -> {
 				FlxG.sound.play(Paths.sound('nene_laugh'), 0.6);
 				gf.playAnim('scene1', true);
 				gf.specialAnim = true;
@@ -311,7 +312,8 @@ function doNeneShit() {
 }
 
 function endCutscene(skip) {
-	if(ClientPrefs.lowQuality) return;
+	if (ClientPrefs.lowQuality)
+		return;
 
 	cutscene = false;
 	FlxTween.cancelTweensOf(FlxG.camera);
@@ -322,17 +324,16 @@ function endCutscene(skip) {
 		weirdTween2.cancel();
 	}
 
-	if(cutsceneSounds.length > 0){
-		for(i in cutsceneSounds)
-		{
-			if(i != null) {
+	if (cutsceneSounds.length > 0) {
+		for (i in cutsceneSounds) {
+			if (i != null) {
 				i.volume = 0;
 				i.stop();
 			}
 		}
 	}
 
-	if(skipTxt != null){
+	if (skipTxt != null) {
 		FlxTween.cancelTweensOf(skipTxt);
 		FlxTween.tween(skipTxt, {y: FlxG.height}, 1, {ease: FlxEase.circIn});
 	}
@@ -378,14 +379,13 @@ function onUpdate(elapsed) {
 	if (sign.x < -1280 && inTunnel != true)
 		reload_sign();
 
+	if (ClientPrefs.lowQuality)
+		return;
 
-	if(ClientPrefs.lowQuality) return;
-
-	if(eventTimer != null && !cutscene)
+	if (eventTimer != null && !cutscene)
 		eventTimer.cancel();
-	
-	tunnelbg.x = FlxMath.lerp(tunnelbg.x, tunnelbg.x - 270, FlxMath.bound(elapsed * 9, 0, 1));
 
+	tunnelbg.x = FlxMath.lerp(tunnelbg.x, tunnelbg.x - 270, FlxMath.bound(elapsed * 9, 0, 1));
 
 	rainTime += elapsed;
 	rainTime++;
@@ -437,13 +437,11 @@ var previous_combo:Int;
 function goodNoteHit(note) {
 	previous_combo = combo;
 
-	if (combo % 50 == 0 && !note.isSustainNote && !nene_readytokill) {
-		if (combo >= 100) {
-			gf.playAnimForDuration('cheer2', 0.7, true);
-		} else {
-			gf.playAnimForDuration('cheer1', 0.7, true);
-		}
-	}
+	if (combo < 50)
+		return ScriptConstants.CONTINUE_FUNC;
+
+	if (combo % 50 == 0 && !note.isSustainNote && !nene_readytokill)
+		gf.playAnimForDuration(combo >= 100 ? 'cheer2' : 'cheer1', 0.7, true);
 }
 
 function noteMiss(note) {
@@ -458,11 +456,11 @@ var middle_cam:Bool = false;
 function onEvent(eventName, value1, value2) {
 	switch (eventName) {
 		case 'Song Events':
-			if(ClientPrefs.lowQuality) return;
+			if (ClientPrefs.lowQuality)
+				return;
 
 			switch (value1) {
 				case 'Honk Horn':
-
 					megaphone.animation.play('megaphoneanim', true);
 
 				case 'Tunnel':

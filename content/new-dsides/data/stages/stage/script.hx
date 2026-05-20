@@ -104,8 +104,10 @@ function onCreatePost() {
 		camZoomingMult = 0;
 		FlxG.camera.zoom = 2.5;
 		isCameraOnForcedPos = true;
-		snapCamToPos(getCharacterCameraPos(gf).x, getCharacterCameraPos(gf).y + 50);
+		snapCamToPos(getCharacterCameraPos(gf).x, getCharacterCameraPos(gf).y + 50, true);
 		FlxTween.tween(camFollow, {y: camFollow.y - 120}, 2, {ease: FlxEase.quadOut});
+
+		final pos = getCharacterCameraPos(boyfriend);
 
 		FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 8, {
 			startDelay: 2.125,
@@ -113,7 +115,7 @@ function onCreatePost() {
 			onStart: () -> {
 				FlxTween.tween(audience, {y: audienceY}, 8.7, {ease: FlxEase.smootherStepOut});
 
-				FlxTween.tween(camFollow, {x: getCharacterCameraPos(boyfriend).x, y: getCharacterCameraPos(boyfriend).y}, 8, {
+				FlxTween.tween(camFollow, {x: pos.x, y: pos.y}, 8, {
 					ease: FlxEase.quartInOut,
 					onComplete: () -> {
 						isCameraOnForcedPos = false;
@@ -196,6 +198,28 @@ function onUpdate(elapsed) {
 
 	if (beatboxing_on)
 		defaultCamZoom = FlxMath.lerp(defaultCamZoom, 0.9, FlxMath.bound(elapsed * 0.7, 0, 1));
+}
+
+function onSongStart() {
+	if (PlayState.SONG.song.toLowerCase() == 'dad battle') {
+		snapCamToPos(getCharacterCameraPos(gf).x, getCharacterCameraPos(gf).y + 50, true);
+		FlxTween.tween(camFollow, {y: camFollow.y - 120}, 2, {ease: FlxEase.quadOut});
+
+		if (!ClientPrefs.lowQuality)
+			audience.y += 250;
+
+		isCameraOnForcedPos = true;
+
+		snapCamToPos(getCharacterCameraPos(gf).x, getCharacterCameraPos(gf).y + 150, true);
+
+		camGame.zoom += 2.75;
+		FlxTween.tween(camGame, {zoom: defaultCamZoom * 1.5}, 8, {startDelay: 1, ease: FlxEase.quartInOut});
+
+		FlxTween.tween(camFollow, {y: camFollow.y - 150}, 9, {ease: FlxEase.smootherStepOut});
+
+		camGame.alpha = 1;
+		camGame.fade(FlxColor.BLACK, 5.5, true);
+	}
 }
 
 function onBeatHit() {
@@ -287,23 +311,6 @@ function onEvent(eventName, value1, value2) {
 					}
 				case 'chorus':
 					dadbattle_chorus = !dadbattle_chorus;
-
-				case 'Intro':
-					FlxTimer.wait(0.01, () -> {
-						if (!ClientPrefs.lowQuality)
-							audience.y += 250;
-
-						camGame.zoom += 2.75;
-						FlxTween.tween(camGame, {zoom: defaultCamZoom * 1.5}, 8, {startDelay: 1, ease: FlxEase.quartInOut});
-
-						camFollow.x = getCharacterCameraPos(gf).x;
-						camFollow.y += 150;
-						FlxTween.tween(camFollow, {y: camFollow.y - 150}, 9, {ease: FlxEase.smootherStepOut});
-
-						camGame.alpha = 1;
-						camGame.fade(FlxColor.BLACK, 5.5, true);
-						FlxG.camera.snapToTarget();
-					});
 
 				case 'Audience Rising':
 					if (!ClientPrefs.lowQuality)

@@ -2,7 +2,7 @@
 	"directory": "",
 	"defaultZoom": 0.725,
 
-	"boyfriend": [1220, 275],
-	"girlfriend": [870, 255],
-	"opponent": [650, 250]
+	"boyfriend": [1420, 275],
+	"girlfriend": [1100, 300],
+	"opponent": [650, 330]
 }

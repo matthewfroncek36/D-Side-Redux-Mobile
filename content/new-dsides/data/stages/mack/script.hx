@@ -1,3 +1,5 @@
+import funkin.utils.NoteUtil;
+
 function onLoad() {
 	bgWindowColor = new BGSprite('backgrounds/ourple/lore/lore_normal_bg_windowcolor', -238, -321, 1.0, 1.0);
 	add(bgWindowColor);
@@ -20,7 +22,7 @@ function onCreatePost() {
 	camFollow.setPosition(1000, 500);
 	FlxG.camera.snapToTarget();
 	initScript('data/scripts/ourple_hud');
-	
+
 	gfGroup.visible = false;
 	camZooming = true;
 
@@ -95,6 +97,14 @@ function onCreatePost() {
 			gf.canDance = true;
 		});
 	});
+}
+
+function onSpawnSustainSplash(splash) {
+	// really weird that theyre not being offset correctly??
+	// ill fix it engine wise later ig NO TIME I GOT A DEADLINE TO MEET
+	splash.animOffsets.set('start' + splash.data, [0, 0]);
+	splash.animOffsets.set('loop' + splash.data, [-10, 15]);
+	splash.animOffsets.set('end' + splash.data, [0, 0]);
 }
 
 var can = true;

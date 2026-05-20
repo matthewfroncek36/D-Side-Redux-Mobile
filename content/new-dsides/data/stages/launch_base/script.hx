@@ -1,4 +1,4 @@
-import funkin.data.NoteSkinHelper;
+// import funkin.data.NoteSkinHelper;
 import openfl.filters.ShaderFilter;
 import funkin.utils.WindowUtil;
 import funkin.objects.Bopper;
@@ -14,11 +14,10 @@ var fakebg:Array<FlxSprite> = [];
 var realbg:Array<FlxSprite> = [];
 
 function onLoad() {
-	if(FlxG.save.data.execution == null || FlxG.save.data.execution == false)
-	{
-		FlxG.stage.window.alert('N \n   0 \n\n C h\n         E \n            A T       n\n                    I         G .', 'ILLEGAL INSTRUCTION');
-		WindowUtil.exit();
-	}
+	// if (FlxG.save.data.execution == null || FlxG.save.data.execution == false) {
+	// 	FlxG.stage.window.alert('N \n   0 \n\n C h\n         E \n            A T       n\n                    I         G .', 'ILLEGAL INSTRUCTION');
+	// 	WindowUtil.exit();
+	// }
 
 	// Fake BG
 	bg1 = new FlxSprite(-800, -500);
@@ -35,8 +34,7 @@ function onLoad() {
 
 	fakebg.push(bg1);
 	fakebg.push(bg2);
-	if(!ClientPrefs.lowQuality)
-	{
+	if (!ClientPrefs.lowQuality) {
 		meat1 = new Bopper(1375, -385).loadAtlas('backgrounds/exe/execution/trees');
 		meat1.addAnimByPrefix('idle', 'BG/BG1', 28, true);
 		meat1.playAnim('idle');
@@ -64,13 +62,13 @@ function onLoad() {
 		firecolor.zIndex = 19;
 		firecolor.blend = BlendMode.MULTIPLY;
 
-		illegal1 = new FlxSprite(-500,-500).makeGraphic(4980, 4020, 0xFF000000);
+		illegal1 = new FlxSprite(-500, -500).makeGraphic(4980, 4020, 0xFF000000);
 		illegal1.scrollFactor.set(0, 0);
 		illegal1.zIndex = 5;
 		illegal1.alpha = 0.5;
 		illegal1.visible = false;
 
-		illegal2 = new FlxSprite(-500,-500).makeGraphic(4980, 4020, 0xFF1500FF);
+		illegal2 = new FlxSprite(-500, -500).makeGraphic(4980, 4020, 0xFF1500FF);
 		illegal2.scrollFactor.set(0, 0);
 		illegal2.zIndex = 6;
 		illegal2.blend = BlendMode.MULTIPLY;
@@ -83,10 +81,10 @@ function onLoad() {
 		fakebg.push(illegal1);
 		fakebg.push(illegal2);
 	}
-	for (item in fakebg) 
+	for (item in fakebg)
 		add(item);
 
-	// Real BG	
+	// Real BG
 	floor = new FlxSprite(-597, 312);
 	floor.loadGraphic(Paths.image("backgrounds/exe/execution/RealBG/Floor"));
 	floor.scrollFactor.set(1, 1);
@@ -103,7 +101,7 @@ function onLoad() {
 	spikes.shader = hudGlitch;
 	realbg.push(spikes);
 
-	if(!ClientPrefs.lowQuality){
+	if (!ClientPrefs.lowQuality) {
 		tube1 = new FlxSprite(-401, -467);
 		tube1.frames = Paths.getSparrowAtlas("backgrounds/exe/execution/RealBG/Tree1");
 		tube1.animation.addByPrefix('idle', 'Tree1', 24, true);
@@ -133,9 +131,7 @@ function onLoad() {
 		bushes.zIndex = -20;
 		bushes.shader = hudGlitch;
 		realbg.push(bushes);
-
 	}
-
 
 	deathegg = new FlxSprite(-189, -419);
 	deathegg.loadGraphic(Paths.image("backgrounds/exe/execution/RealBG/DeathEgg"));
@@ -221,7 +217,7 @@ function onLoad() {
 	orgh2.alpha = 0.7;
 	realbg.push(orgh2);
 
-	cooleffect = new FlxSprite(-700, -300).makeGraphic(3680, 2920, FlxColor= 0xFFFF0000);
+	cooleffect = new FlxSprite(-700, -300).makeGraphic(3680, 2920, FlxColor = 0xFFFF0000);
 	cooleffect.scrollFactor.set(2, 2);
 	cooleffect.zIndex = 998;
 	cooleffect.blend = BlendMode.ADD;
@@ -261,10 +257,10 @@ function onCreatePost() {
 
 	glitch.setFloat('GlitchAmount', 0.0001);
 	hudGlitch.setFloat('GlitchAmount', 0.00005);
-	swapNoteskin('exe');
+	// swapNoteskin('exe');
 
 	death = new FunkinVideoSprite();
-	death.onFormat(()->{
+	death.onFormat(() -> {
 		death.camera = camOther;
 		death.screenCenter();
 	});
@@ -278,13 +274,15 @@ function onEvent(eventName, value1, value2) {
 		case 'Execution Events':
 			switch (value1.toLowerCase()) {
 				case 'aura':
-					if(ClientPrefs.lowQuality) return;
+					if (ClientPrefs.lowQuality)
+						return;
 
 					FlxTween.tween(fire, {alpha: 1}, 30, {ease: FlxEase.quintOut});
 
 				case 'aura loss':
-					if(ClientPrefs.lowQuality) return;
-				
+					if (ClientPrefs.lowQuality)
+						return;
+
 					FlxTween.cancelTweensOf(fire);
 					FlxTween.tween(fire, {alpha: 0}, 7, {ease: FlxEase.quintOut});
 
@@ -303,14 +301,14 @@ function onEvent(eventName, value1, value2) {
 							i.animation.pause();
 					}
 
-					var poop = ClientPrefs.lowQuality ? [bg1, bg2] : [bg1,bg2, meat1, meat2, boyfriend, gf];
-					for (fat in poop) 
+					var poop = ClientPrefs.lowQuality ? [bg1, bg2] : [bg1, bg2, meat1, meat2, boyfriend, gf];
+					for (fat in poop)
 						fat.shader = illegaleffect;
-					
+
 					camHUD.filters = [new ShaderFilter(illegaleffect)];
 
 					boyfriend.visible = false;
-					gf.visible= false;
+					gf.visible = false;
 
 					notes.forEachAlive((note) -> {
 						note.canMiss = true;
@@ -319,8 +317,8 @@ function onEvent(eventName, value1, value2) {
 
 					dad.playAnim('Transform2');
 					dad.specialAnim = true;
-				
-					if(!ClientPrefs.lowQuality){
+
+					if (!ClientPrefs.lowQuality) {
 						illegal1.visible = true;
 						illegal2.visible = true;
 					}
@@ -333,11 +331,11 @@ function onEvent(eventName, value1, value2) {
 					dad.shader = glitch;
 					camHUD.filters = [];
 
-					var poop = ClientPrefs.lowQuality ? [bg1, bg2, boyfriend, gf] : [bg1,bg2, meat1, meat2, boyfriend, gf];
-					for (fat in poop) 
+					var poop = ClientPrefs.lowQuality ? [bg1, bg2, boyfriend, gf] : [bg1, bg2, meat1, meat2, boyfriend, gf];
+					for (fat in poop)
 						fat.shader = null;
 
-					if(!ClientPrefs.lowQuality)
+					if (!ClientPrefs.lowQuality)
 						illegal1.visible = illegal2.visible = false;
 
 					dadGroup.zIndex = 0;
@@ -361,14 +359,14 @@ function onEvent(eventName, value1, value2) {
 					stageshit = 1;
 					camGame.filters = [new ShaderFilter(chud_shader)];
 
-					for (item in fakebg) 
+					for (item in fakebg)
 						item.visible = false;
-					
-					for (item in realbg) 
+
+					for (item in realbg)
 						item.visible = true;
 
 					boyfriend.visible = true;
-					gf.visible= true;
+					gf.visible = true;
 
 					dad.x = 297;
 					dad.y = 80;
@@ -379,7 +377,7 @@ function onEvent(eventName, value1, value2) {
 					gf.x = 800;
 					gf.y = 290;
 
-					swapNoteskin('default');
+				// swapNoteskin('default');
 
 				case 'tails':
 					tailscorpse.animation.play('turn');
@@ -390,24 +388,22 @@ function onEvent(eventName, value1, value2) {
 	}
 }
 
-function swapNoteskin(newSkin:String) {
-	PlayState.SONG.arrowSkin = newSkin;
-	noteskinLoading(newSkin);
-	initNoteSkinning(newSkin);
-
-	notes.forEachAlive((note) -> {
-		note.texture = note.mustPress ? PlayState.noteSkin.data.playerSkin : PlayState.noteSkin.data.opponentSkin;
-		note.reloadNote();
-	});
-
-	for (j in playFields.members) {
-		for (i in j.members) {
-			i.texture = NoteSkinHelper.arrowSkins[i.player];
-			i.reloadNote();
-			i.handleColors('static');
-		}
-	}
-}
+// function swapNoteskin(newSkin:String) {
+// 	PlayState.SONG.arrowSkin = newSkin;
+// 	noteskinLoading(newSkin);
+// 	initNoteSkinning(newSkin);
+// 	notes.forEachAlive((note) -> {
+// 		note.texture = note.mustPress ? PlayState.noteSkin.data.playerSkin : PlayState.noteSkin.data.opponentSkin;
+// 		note.reloadNote();
+// 	});
+// 	for (j in playFields.members) {
+// 		for (i in j.members) {
+// 			i.texture = NoteSkinHelper.arrowSkins[i.player];
+// 			i.reloadNote();
+// 			i.handleColors('static');
+// 		}
+// 	}
+// }
 
 function onSpawnNote(note) {
 	note.reloadNote();
@@ -417,7 +413,8 @@ function onUpdate(elapsed) {
 	totalElapsed += elapsed;
 	cloud_shader.setFloat('iTime', totalElapsed);
 
-	if(ClientPrefs.lowQuality) return;
+	if (ClientPrefs.lowQuality)
+		return;
 	firecolor.alpha = fire.alpha;
 }
 
@@ -426,10 +423,9 @@ function onDestroy() {
 }
 
 var can = true;
-function onGameOver()
-{
-	if(can)
-	{
+
+function onGameOver() {
+	if (can) {
 		can = false;
 
 		KillNotes();

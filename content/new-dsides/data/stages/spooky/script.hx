@@ -12,6 +12,8 @@ var dark = (PlayState.SONG.song.toLowerCase() == 'south') || (PlayState.SONG.son
 var fuck:RGBPalette;
 var blue;
 
+var shaders = (!ClientPrefs.lowQuality) && ClientPrefs.shaders;
+
 function makeStageSprite(x, y, name) {
 	var sprite = new FlxSprite(x, y);
 	sprite.setFrames(Paths.getSparrowAtlas('backgrounds/week2/week2'));
@@ -110,7 +112,7 @@ function onCreatePost() {
 		}
 	}
 
-	if(ClientPrefs.shaders){
+	if(shaders){
 		blue = newShader('blue');
 		blue.setFloat('pix', 0.000001);
 		blue.setFloat('hue', 1.2);
@@ -153,20 +155,22 @@ function onSongStart()
 			camGame.visible = true;
 			automatedStrikes = false;
 
-			for (i in [bf_dark, gf_dark, kids_dark, bgdark])
-				i.alpha = 1;
+			if(!ClientPrefs.lowQuality)
+			{
+				for (i in [bf_dark, gf_dark, kids_dark, bgdark])
+					i.alpha = 1;	
+			
+				bgFaces.alpha = 1;
+				window.alpha = 0;
+			
+			}
 			
 
-			if(ClientPrefs.shaders && blue != null)
+			if(shaders && blue != null)
 				blue.setFloat('hueBlend', 1);
 			
-
-			bgFaces.alpha = 1;
-
-			window.alpha = 0;
-
 			for (i in [dad, gf, boyfriend])
-				i.alpha = 0;
+				i.alpha = (ClientPrefs.lowQuality) ? 1 : 0;
 	}
 	
 
@@ -236,7 +240,7 @@ function strike_lightning() {
 		FlxTween.tween(i, {alpha: 1}, lightning_timer);
 	}
 
-	if(ClientPrefs.shaders && blue != null){
+	if(shaders && blue != null){
 		blue.setFloat('hueBlend', 0);
 
 		FlxTween.num(0, 1, lightning_timer * 1.4, {onUpdate: (t)->{
@@ -290,7 +294,7 @@ function onEvent(eventName, value1, value2) {
 
 				window.alpha = 0;
 				FlxTween.tween(window, {alpha: 1}, 2);
-				if(ClientPrefs.shaders && blue != null){
+				if(shaders && blue != null){
 					blue.setFloat('hueBlend', 1);
 
 					FlxTween.num(1, 0, 2, {onUpdate: (t)->{

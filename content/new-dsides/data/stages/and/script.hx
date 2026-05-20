@@ -11,10 +11,10 @@ typedef Anim = {
 var anims:Array<Anim> = [];
 var zooming = false;
 var p2 = [];
+var ohmygodstop = true;
 
-function makeSpr(x,y,anim)
-{
-	var spr = new FlxSprite(x,y).setFrames(Paths.getSparrowAtlas('backgrounds/and'));
+function makeSpr(x, y, anim) {
+	var spr = new FlxSprite(x, y).setFrames(Paths.getSparrowAtlas('backgrounds/and'));
 	spr.animation.addByPrefix('idle', anim, 24, false);
 	spr.animation.play('idle');
 
@@ -31,6 +31,14 @@ function onLoad() {
 	stones.scrollFactor.set(0.8, 0.8);
 	stones.antialiasing = true;
 	add(stones);
+
+	cum = new FlxSprite(470, 180).setFrames(Paths.getSparrowAtlas('backgrounds/cumlordenter'));
+	cum.animation.addByPrefix('whatever', 'cumlord enter', 24, false);
+	cum.animation.play('whatever');
+	cum.setScale(.4,.4);
+	cum.scrollFactor.set(.8,.8);
+	cum.visible = false;
+	add(cum);
 
 	floor = makeSpr(0, 475, 'floor');
 	floor.antialiasing = true;
@@ -54,12 +62,12 @@ function onLoad() {
 	for (i in p2)
 		i.visible = false;
 
-	shitold = makeSpr(0,0,'shit');
+	shitold = makeSpr(0, 0, 'shit');
 	shitold.visible = false;
 	add(shitold);
 
-	if(!ClientPrefs.lowQuality){
-		skrinkly = new Character(1600, 850, 'skrinkly');
+	if (!ClientPrefs.lowQuality) {
+		skrinkly = new Character(1400, 950, 'skrinkly');
 		skrinkly.zIndex = 1;
 		add(skrinkly);
 
@@ -90,6 +98,12 @@ function onCreatePost() {
 		camGame.addShader(orang);
 	}
 
+	if(!ClientPrefs.lowQuality)
+	{
+		dumb = new Character(-230, 380, 'wagoogusjr');
+		gfGroup.addChar(dumb);
+	}
+
 	death = new FunkinVideoSprite();
 	death.onFormat(() -> {
 		death.camera = camOther;
@@ -99,7 +113,7 @@ function onCreatePost() {
 	death.onEnd(FlxG.resetState);
 	add(death);
 
-	modManager.queueFuncOnce(2016, ()->{
+	modManager.queueFuncOnce(2016, () -> {
 		camHUD.fade(FlxColor.BLACK, 3);
 	});
 }
@@ -107,35 +121,52 @@ function onCreatePost() {
 function onEvent(eventName, value1, value2) {
 	switch (eventName) {
 		case 'Play Animation':
-			if(value1 == 'cumsplode'){
-				dad.onAnimationFinish.add(()->{
+			if (value1 == 'cumsplode') {
+				dad.onAnimationFinish.add(() -> {
 					dad.visible = false;
 				});
+			} else if(value1 == 'bonk')
+			{
+				if(!ClientPrefs.lowQuality)
+				{
+					ohmygodstop = false;
+					dumb.playAnim('stare', true);
+					dumb.specialAnim = true;
+					trace('??????');
+				}
 			}
 		case 'Transformations':
 			switch (value1) {
 				case 'rareblin':
 					FlxG.camera.flash(0xFFFFFFFF, 1);
 					shitold.visible = true;
-					if(!ClientPrefs.lowQuality)
+					if (!ClientPrefs.lowQuality) {
+						dumb.visible = false;
 						skrinkly.visible = false;
+					}
 				case 'nvm fuck you bitch':
 					FlxG.camera.flash(0xFFFFFFFF, 1);
 					shitold.visible = false;
-					if(!ClientPrefs.lowQuality)
+					if (!ClientPrefs.lowQuality) {
+						dumb.visible = true;
 						skrinkly.visible = true;
+					}
 				// unimplemented. will be in 2.0 probably
-				// case 'cumlord entrance':
-				//     shitcumfartbg.visible = true;
-				//     shitcumfartbg.animation.play("entr");
+				case 'cumlord entrance':
+					cum.animation.play('whatever');
+					cum.visible = true;
 				case 'evil bye':
 					dad.visible = false;
 				case 'flash':
 					FlxG.camera.flash(0xFFFFFFFF, 0.3);
 				case 'cumlord transition':
 					zooming = true;
-					if(!ClientPrefs.lowQuality)
+					if (!ClientPrefs.lowQuality)
+					{
+						dumb.visible = false;
 						skrinkly.visible = false;
+					}
+					cum.visible = false;
 					FlxG.camera.flash(0xFFFFFFFF, 1);
 					defaultCamZoom = 0.85;
 
@@ -145,8 +176,25 @@ function onEvent(eventName, value1, value2) {
 	}
 }
 
+function onCountdownTick()
+{
+	if (ClientPrefs.lowQuality)
+		return;
+
+	if(!dumb.specialAnim)
+		dumb.dance();
+
+	if (!StringTools.contains(skrinkly.getAnimName(), 'sing') && curBeat % 2 == 0)
+		skrinkly.dance();
+}
+
 function onBeatHit() {
-	if(ClientPrefs.lowQuality) return;
+	if (ClientPrefs.lowQuality)
+		return;
+
+
+	if(ohmygodstop)
+		dumb.dance();
 
 	if (!StringTools.contains(skrinkly.getAnimName(), 'sing') && curBeat % 2 == 0)
 		skrinkly.dance();
@@ -155,7 +203,8 @@ function onBeatHit() {
 var singAnimations:Array<String> = ['singLEFT', 'singDOWN', 'singUP', 'singRIGHT'];
 
 function onUpdate(elapsed) {
-	if(ClientPrefs.lowQuality) return;
+	if (ClientPrefs.lowQuality)
+		return;
 
 	for (anim in anims) {
 		if (anim.time <= Conductor.songPosition) {

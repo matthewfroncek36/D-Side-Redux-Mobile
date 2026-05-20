@@ -100,6 +100,7 @@ function breakSunk() {
 
 function onCreatePost() {
 	initScript('data/scripts/NoteWarning');
+	initScript('data/scripts/exe_hud');
 
 	skipCountdown = true;
 	gfGroup.zIndex = 1;
