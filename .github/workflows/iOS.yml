@@ -28,6 +28,7 @@ jobs:
          haxelib install hxpkg --global
          haxelib run hxpkg setup --global
          haxelib run hxpkg install
+         git -C .haxelib/lime/git submodule update --init --recursive
          haxelib run lime rebuild hxcpp
          
       - name: Configure iOS

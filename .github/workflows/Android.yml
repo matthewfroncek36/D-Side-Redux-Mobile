@@ -22,12 +22,6 @@ jobs:
         uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.7
-          
-      - name: Install Libraries
-        run: |
-         haxelib install hxpkg --global
-         haxelib run hxpkg setup --global
-         haxelib run hxpkg install
 
       - name: Restore Cache
         uses: actions/cache@v4
@@ -39,6 +33,14 @@ jobs:
             export/release/android/obj/
           restore-keys: |
             cache-android-night-
+
+      - name: Install Libraries
+        run: |
+         haxelib install hxpkg --global
+         haxelib run hxpkg setup --global
+         haxelib run hxpkg install
+         git -C .haxelib/lime/git submodule update --init --recursive
+
       - name: Configure Android
         run: |
           haxelib run lime setup android

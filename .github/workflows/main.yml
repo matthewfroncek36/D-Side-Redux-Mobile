@@ -46,6 +46,7 @@ jobs:
           haxelib install hxcpp > /dev/null
           haxelib install hxpkg
           haxelib run hxpkg install
+          git -C .haxelib/lime/git submodule update --init --recursive
       - name: Compile
         run: haxelib run lime build Project.xml linux -D ${{ inputs.buildFlags || 'commit' }}
       - name: Publish Artifact
@@ -70,6 +71,7 @@ jobs:
           haxelib install hxcpp > nul
           haxelib install hxpkg
           haxelib run hxpkg install
+          git -C .haxelib/lime/git submodule update --init --recursive
       - name: Compile
         run: haxelib run lime build windows -D ${{ inputs.buildFlags || 'commit' }}
       - name: Publish Artifact
@@ -94,6 +96,7 @@ jobs:
           haxelib install hxcpp > /dev/null --quiet
           haxelib install hxpkg
           haxelib run hxpkg install
+          git -C .haxelib/lime/git submodule update --init --recursive
       - name: Compile
         run: |
           haxelib run lime build mac -64 -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_M64
@@ -120,6 +123,7 @@ jobs:
           haxelib install hxcpp > /dev/null --quiet
           haxelib install hxpkg
           haxelib run hxpkg install
+          git -C .haxelib/lime/git submodule update --init --recursive
       - name: Compile
         run: |
           haxelib run lime build mac -arm64 -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_ARM64
