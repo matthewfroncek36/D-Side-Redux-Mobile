@@ -34,6 +34,7 @@ jobs:
       - name: Configure iOS
         run: |
           haxelib run lime setup ios
+          haxelib run lime rebuild lime ios
           
       - name: Compile
         run: haxelib run lime build ios -nosign
