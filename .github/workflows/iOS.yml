@@ -42,15 +42,25 @@ jobs:
       - name: Making ipa file
         run: |
           brew install ldid
-          cd export/release/ios/build/Release-iphoneos/NightmereVision.app
-          ldid -S../../../NightmereVision/NightmereVision.entitlements NightmereVision
-          cd ..
+          cd export/release/ios/build/Release-iphoneos
+          APP_BUNDLE="$(find . -maxdepth 1 -type d -name '*.app' -print -quit)"
+          APP_NAME="$(basename "$APP_BUNDLE" .app)"
+          if [ -z "$APP_BUNDLE" ]; then
+            echo "No .app bundle found"
+            exit 1
+          fi
+          if [ -f "../$APP_NAME/$APP_NAME.entitlements" ]; then
+            ldid -S"../$APP_NAME/$APP_NAME.entitlements" "$APP_BUNDLE/$APP_NAME"
+          else
+            ldid -S "$APP_BUNDLE/$APP_NAME"
+          fi
+          rm -rf Payload
           mkdir Payload
-          mv NightmereVision.app Payload
-          zip -r NightmereVision.ipa Payload
+          cp -R "$APP_BUNDLE" Payload/
+          zip -r "$APP_NAME.ipa" Payload
       - name: Upload Artifact
         uses: actions/upload-artifact@main
         with:
-          name: NightmereVision iOS
+          name: DSideRedux-iOS
           path: export/release/ios/build/Release-iphoneos/*.ipa
           if-no-files-found: error
