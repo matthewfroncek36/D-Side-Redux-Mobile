@@ -34,6 +34,11 @@ jobs:
           restore-keys: |
             cache-android-night-
 
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev
+
       - name: Install Libraries
         run: |
          haxelib install hxpkg --global
