@@ -40,7 +40,7 @@ jobs:
       - name: install libvlc
         run: |
             sudo apt-get update
-            sudo apt-get install -y vlc libvlc-dev libvlccore-dev vlc-bin libasound2-dev libpulse-dev
+            sudo apt-get install -y vlc libvlc-dev libvlccore-dev vlc-bin libasound2-dev libpulse-dev libx11-dev
       - name: Install libraries
         run: |
           haxelib setup ~/haxelib

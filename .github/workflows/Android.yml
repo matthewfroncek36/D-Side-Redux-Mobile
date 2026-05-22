@@ -37,7 +37,7 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libasound2-dev libpulse-dev
+          sudo apt-get install -y libasound2-dev libpulse-dev libx11-dev
 
       - name: Install Libraries
         run: |
